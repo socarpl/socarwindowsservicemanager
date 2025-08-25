@@ -7,7 +7,7 @@ namespace SWSM
     {
         ProgressBarForm pbf = null;
 
-        public MainForm()
+        public MainForm() 
         {
             InitializeComponent();
             pbf = new ProgressBarForm();

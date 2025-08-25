@@ -102,6 +102,12 @@ namespace SWSM.Core
             }
         }
 
+        /// <summary>
+        /// Retrieves the current status of a specified Windows service.
+        /// </summary>
+        /// <param name="ServiceName">The short name of the Windows service.</param>
+        /// <returns>The current <see cref="ServiceControllerStatus"/> of the service.</returns>
+        /// <exception cref="Exception">Thrown if the specified service does not exist.</exception>
         public static ServiceControllerStatus GetServiceCurrentState(String ServiceName)
         {
             if (!ServiceExist(ServiceName))
