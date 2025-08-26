@@ -83,6 +83,13 @@ namespace SWSM.Core
             return "Exception occured during fetching command line";
         }
 
+
+        /// <summary>
+        /// Checks if service exist based on short name of the service
+        /// </summary>
+        /// <param name="serviceName"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static bool ServiceExist(string serviceName)
         {
             try
@@ -118,11 +125,18 @@ namespace SWSM.Core
             }
         }
 
+        /// <summary>
+        /// Changes the state of a specified Windows service to the desired state.
+        /// </summary>
+        /// <param name="serviceName">The short name of the Windows service to change state for.</param>
+        /// <param name="newState">The desired state to change the service to. See <see cref="ServiceStateType"/>.</param>
+        /// <param name="options">Options controlling how the state change is performed. See <see cref="ServiceChangeStateOptions"/>.</param>
+        /// <returns>An <see cref="OperationResult"/> indicating the outcome of the operation.</returns>
         public static OperationResult ChangeServiceState(string serviceName, ServiceStateType newState, ServiceChangeStateOptions? options)
         {
             try
             {
-                if (options == null) options = new ServiceChangeStateOptions(); //default
+                if (options == null) options = ServiceChangeStateOptions.GetDefaultOption(); //default
 
                 //If for some reason provided state is Undefined there is no action taken 
                 if (newState == ServiceStateType.Undefined)
@@ -171,37 +185,36 @@ namespace SWSM.Core
                     }
                     #endregion
 
-                    // Execute state change
-                    #region status state change 
-                    switch (newState)
-                    {
-                        case ServiceStateType.Running:
-                            if (GetServiceCurrentStartupMode(serviceName) == StartupMode.Disabled
-                                && options.enableIfDisabled)
-                            {
-                                if (!ChangeStartupMode(serviceName, options.targetModeWhenEnabled).IsSuccess)
-                                    return OperationResult.Failure($"Failed to change startup mode for service '{serviceName}' before starting it.");
-                                service.Refresh();
-                            }
-                            service.Start();
+                // Execute state change
+                #region status state change 
+                switch (newState)
+                {
+                    case ServiceStateType.Running:
+                        if (GetServiceCurrentStartupMode(serviceName) == StartupMode.Disabled && options.enableIfDisabled)
+                        {
+                            if (!ChangeStartupMode(serviceName, options.targetStartupModeAfterEnabled).IsSuccess)
+                                return OperationResult.Failure($"Failed to change startup mode for service '{serviceName}' before starting it.");
+                            service.Refresh();
+                        }
+                        service.Start();
 
-                            if (options.waitForResult) service.WaitForStatus(ServiceControllerStatus.Running);
-                            break;
-                        case ServiceStateType.Stopped:
-                            service.Stop();
-                            if (options.waitForResult) service.WaitForStatus(ServiceControllerStatus.Stopped);
-                            break;
-                        case ServiceStateType.Paused:
-                            service.Pause();
-                            if (options.waitForResult) service.WaitForStatus(ServiceControllerStatus.Paused);
-                            break;
-                        default:
-                            throw new Exception("Unreachable code reached.");
+                        if (options.waitForResult) service.WaitForStatus(ServiceControllerStatus.Running);
+                        break;
+                    case ServiceStateType.Stopped:
+                        service.Stop();
+                        if (options.waitForResult) service.WaitForStatus(ServiceControllerStatus.Stopped);
+                        break;
+                    case ServiceStateType.Paused:
+                        service.Pause();
+                        if (options.waitForResult) service.WaitForStatus(ServiceControllerStatus.Paused);
+                        break;
+                    default:
+                        throw new Exception("Unreachable code reached.");
 
-                    }
-                    #endregion
+                }
+                #endregion
 
-                    return OperationResult.Success;
+                return OperationResult.Success;    
                 }
             }
             catch (Exception ex)

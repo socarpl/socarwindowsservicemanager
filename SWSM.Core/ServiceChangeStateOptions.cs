@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace SWSM.Core
 {
+    /// <summary>
+    /// Define set of options that are used during ServiceStateChange
+    /// </summary>
     public class ServiceChangeStateOptions
     {
 
@@ -21,6 +24,11 @@ namespace SWSM.Core
         /// <summary>
         /// if enableIfDisabled is true, this property defines the startup mode to set for the service. 
         /// </summary>
-        public StartupMode targetModeWhenEnabled { get; set; } = StartupMode.Manual;   
+        public StartupMode targetStartupModeAfterEnabled { get; set; } = StartupMode.Manual;
+
+        public static ServiceChangeStateOptions? GetDefaultOption()
+        {
+            return new ServiceChangeStateOptions();
+        }
     }
 }

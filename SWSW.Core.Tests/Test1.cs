@@ -17,7 +17,7 @@ namespace SWSW.Core.Tests
         public void StartServiceTest()
         {
             //HotKeyServiceUWP            
-            var resultStart = ServicesManager.ChangeServiceState("WirelessKB850NotificationService", ServiceStateType.Running, new ServiceChangeStateOptions { waitForResult=true, enableIfDisabled=true, targetModeWhenEnabled = StartupMode.Automatic } );
+            var resultStart = ServicesManager.ChangeServiceState("WirelessKB850NotificationService", ServiceStateType.Running, new ServiceChangeStateOptions { waitForResult=true, enableIfDisabled=true, targetStartupModeAfterEnabled = StartupMode.Automatic } );
         }
 
         [TestMethod]
