@@ -19,6 +19,8 @@ namespace SWSM.Core.DTO
         public String ServiceDisplayName { get; set; }
         public String ServiceCommandLine { get; set; }
 
+        
+
         public override string ToString()
         {
             return String.Format("{0} x {1} ({2})", ServiceName, ServiceStateType, ServiceStartupType); 

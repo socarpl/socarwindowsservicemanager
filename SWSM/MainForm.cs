@@ -35,8 +35,8 @@ namespace SWSM
         {
             pbf.Text = "Loading services info...";
             pbf.Show();
-            var windowsServices = await Task.Run(() => ServicesManager.GetAllSystemServices(_check_GetCommandlines.Checked, this.pbf.UpdateProgress));
-            advancedDataGridView1.DataSource = windowsServices.ToDataTable();
+            var windowsServices = await Task.Run(() => WindowsServicesInfo.GetAllSystemServices(_check_GetCommandlines.Checked, this.pbf.UpdateProgress));
+            _adgv_ServicesInProfile.DataSource = windowsServices.ToDataTable();
             pbf.Hide();
         }
 
