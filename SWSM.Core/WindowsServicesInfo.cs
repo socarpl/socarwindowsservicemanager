@@ -24,11 +24,11 @@ namespace SWSM.Core
         /// <returns>
         /// List of ServiceEntry objects representing the current Windows Services and their state.
         /// </returns>
-        public static List<ServiceEntry> GetAllSystemServices(bool QueryWMIForCommandLine = false, Action<string, int, int>? ProgressUpdate = null)
+        public static List<ServiceNode> GetAllSystemServices(bool QueryWMIForCommandLine = false, Action<string, int, int>? ProgressUpdate = null)
         {
             // Get all services on the system
             var allservices = ServiceController.GetServices();
-            var ret = new ServiceEntry[allservices.Length];
+            var ret = new ServiceNode[allservices.Length];
             int totalProgress = 0;
 
             // Process each service in parallel for performance
@@ -42,12 +42,17 @@ namespace SWSM.Core
                 ProgressUpdate?.Invoke(service.ServiceName, totalProgress, allservices.Length);
 
                 // Create a ServiceEntry for the current service
-                var ws = new ServiceEntry
+                var ws = new ServiceNode
                 {
                     ServiceStartupType = ServiceInfo.GetServiceStartupType(service),
                     ServiceName = service.ServiceName,
-                    ServiceDisplayName = service.DisplayName
+                    ServiceDisplayName = service.DisplayName,
+                    SourceSC = service,
+                    DependsOn = service.ServicesDependedOn.Select(s => s.ServiceName).ToList(),
+                    DependantServices = service.DependentServices.Select(s => s.ServiceName).ToList()
                 };
+
+                
 
                 // Optionally query WMI for the service command line
                 if (QueryWMIForCommandLine)
@@ -56,6 +61,7 @@ namespace SWSM.Core
                 // Store the result
                 ret[i] = ws;
             });
+
 
             // Return the list of service entries
             return ret.ToList();
@@ -102,7 +108,7 @@ namespace SWSM.Core
             }
         }
 
-
+      
 
 
 

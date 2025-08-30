@@ -27,7 +27,7 @@ namespace SWSM
             }
             else
             {
-                label1.Text = $"[{progress.ToString().PadLeft(total.ToString().Length, '0')}/{total}] {msg}";
+                //label1.Text = $"[{progress.ToString().PadLeft(total.ToString().Length, '0')}/{total}] {msg}";
             }
         }
 
@@ -35,7 +35,7 @@ namespace SWSM
         {
             pbf.Text = "Loading services info...";
             pbf.Show();
-            var windowsServices = await Task.Run(() => WindowsServicesInfo.GetAllSystemServices(_check_GetCommandlines.Checked, this.pbf.UpdateProgress));
+            var windowsServices = await Task.Run(() => WindowsServicesInfo.GetAllSystemServices(false, this.pbf.UpdateProgress));
             _adgv_ServicesInProfile.DataSource = windowsServices.ToDataTable();
             pbf.Hide();
         }

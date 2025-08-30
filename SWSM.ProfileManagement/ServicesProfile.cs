@@ -7,11 +7,11 @@ namespace SWSM.ProfileManagement
 
         public ServicesProfile()
         {
-            ServicesTargetState = new List<ServiceEntry>();
+            ServicesTargetState = new List<ServiceNode>();
         }
         public string Name { get; set; }
 
-        public List<ServiceEntry> ServicesTargetState { get; set; }
+        public List<ServiceNode> ServicesTargetState { get; set; }
         
     }
 }

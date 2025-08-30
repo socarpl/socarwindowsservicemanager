@@ -10,21 +10,29 @@ namespace SWSW.Core.Tests
         [TestMethod]
         public void GetStartupType()
         {
-            var x =  WindowsServicesInfo.GetAllSystemServices(); 
+            var x =  WindowsServicesInfo.GetAllSystemServices(true); 
         }
 
         [TestMethod]
         public void StartServiceTest()
         {
-            //HotKeyServiceUWP            
-            var resultStart = ServiceManager.ChangeServiceState("WirelessKB850NotificationService", ServiceStateType.Running, new ServiceChangeStateOptions { waitForResult=true, enableIfDisabled=true, targetStartupModeAfterEnabled = StartupMode.Automatic } );
+            //HotKeyServiceUWP
+            ServiceManager sm = new ServiceManager();
+            var resultStart = sm.ChangeServiceState("WirelessKB850NotificationService", ServiceStateType.Running, new ServiceChangeStateOptions { waitForResult=true, enableIfDisabled=true, targetStartupModeAfterEnabled = StartupMode.Automatic } );
         }
 
         [TestMethod]
         public void StopServiceTest()
         {
+            ServiceManager sm = new ServiceManager();
             string serviceName = "WirelessKB850NotificationService";
-            var result = ServiceManager.ChangeServiceState(serviceName, ServiceStateType.Stopped, new ServiceChangeStateOptions { waitForResult = true });
+            var result = sm.ChangeServiceState(serviceName, ServiceStateType.Stopped, new ServiceChangeStateOptions { waitForResult = true });
+        }
+
+        [TestMethod]
+        public void BuildTree()
+        {
+            WindowsServicesInfo.GetAllSystemServices(false, null);
         }
     }
 }

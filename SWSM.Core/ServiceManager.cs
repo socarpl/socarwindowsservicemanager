@@ -9,9 +9,18 @@ using Microsoft.Extensions.Logging;
 
 namespace SWSM.Core
 {
-    public static class ServiceManager
+    public class ServiceManager
     {
 
+        public ServiceManager() { }
+
+        public ServiceManager(ILogger<ServiceManager> log)
+        {
+            _log = log;
+        }
+    
+        private ILogger _log;
+     
 
         /// <summary>
         /// Changes the state of a specified Windows service to the desired state.
@@ -20,8 +29,10 @@ namespace SWSM.Core
         /// <param name="newState">The desired state to change the service to. See <see cref="ServiceStateType"/>.</param>
         /// <param name="options">Options controlling how the state change is performed. See <see cref="ServiceChangeStateOptions"/>.</param>
         /// <returns>An <see cref="OperationResult"/> indicating the outcome of the operation.</returns>
-        public static OperationResult ChangeServiceState(string serviceName, ServiceStateType newState, ServiceChangeStateOptions? options)
+        public OperationResult ChangeServiceState(string serviceName, ServiceStateType newState, ServiceChangeStateOptions? options)
         {
+            _log?.LogInformation("ChangeServiceState called with serviceName: {ServiceName}, newState: {NewState}, options: {@Options}", serviceName, newState, options);
+
             try
             {
                 if (options == null) options = ServiceChangeStateOptions.GetDefaultOption(); //default
@@ -38,9 +49,7 @@ namespace SWSM.Core
                 #region Status matching 
                 using (ServiceController service = new ServiceController(serviceName))
                 {
-
-
-
+                    _log?.LogInformation("Current status of service {ServiceName} is {ServiceStatus}", serviceName, service.Status);
                     switch (service.Status)
                     {
                         case ServiceControllerStatus.StartPending:
@@ -49,69 +58,65 @@ namespace SWSM.Core
                         case ServiceControllerStatus.StopPending:
                             return OperationResult.NoAction($"Service '{serviceName}' is already in a pending state. Cannot change state to {newState}.");
 
+                        case ServiceControllerStatus.Running when newState == ServiceStateType.Running:
+                            return OperationResult.NoAction($"Service '{serviceName}' is already running. No action taken.");
+
+                        case ServiceControllerStatus.Paused when newState == ServiceStateType.Paused:
+                            return OperationResult.NoAction($"Service '{serviceName}' is already paused. No action taken.");
+
+                        case ServiceControllerStatus.Stopped when newState == ServiceStateType.Stopped:
+                            return OperationResult.NoAction($"Service '{serviceName}' is already stopped. No action taken.");
+
                         case ServiceControllerStatus.Running:
-                            {
-                                if (newState == ServiceStateType.Running)
-                                    return OperationResult.NoAction($"Service '{serviceName}' is already running. No action taken.");
-                            }
-                            break;
-
                         case ServiceControllerStatus.Paused:
-                            {
-                                if (newState == ServiceStateType.Paused)
-                                    return OperationResult.NoAction($"Service '{serviceName}' is already paused. No action taken.");
-                            }
-                            break;
-
                         case ServiceControllerStatus.Stopped:
-                            {
-                                if (newState == ServiceStateType.Stopped)
-                                    return OperationResult.NoAction($"Service '{serviceName}' is already stopped. No action taken.");
-                            }
-                            break;
-                        default: throw new Exception("This should not be thrown ever as this code should not be reachable");
+                            break; // Continue to state change logic
+
+                        default:
+                            throw new Exception("This should not be thrown ever as this code should not be reachable");
                     }
                     #endregion
 
-                // Execute state change
-                #region status state change 
-                switch (newState)
-                {
-                    case ServiceStateType.Running:
-                        if (ServiceInfo.GetServiceCurrentStartupMode(serviceName) == StartupMode.Disabled && options.enableIfDisabled)
-                        {
-                            if (!ChangeStartupMode(serviceName, options.targetStartupModeAfterEnabled).IsSuccess)
-                                return OperationResult.Failure($"Failed to change startup mode for service '{serviceName}' before starting it.");
-                            service.Refresh();
-                        }
-                        service.Start();
+                    // Execute state change
+                    #region status state change 
+                    switch (newState)
+                    {
+                        case ServiceStateType.Running:
+                            if (ServiceInfo.GetServiceCurrentStartupMode(serviceName) == StartupMode.Disabled && options.enableIfDisabled)
+                            {
+                                if (!ChangeStartupMode(serviceName, options.targetStartupModeAfterEnabled).IsSuccess)
+                                    return OperationResult.Failure($"Failed to change startup mode for service '{serviceName}' before starting it.");
+                                service.Refresh();
+                            }
+                            service.Start();
 
-                        if (options.waitForResult) service.WaitForStatus(ServiceControllerStatus.Running);
-                        break;
-                    case ServiceStateType.Stopped:
-                        service.Stop();
-                        if (options.waitForResult) service.WaitForStatus(ServiceControllerStatus.Stopped);
-                        break;
-                    case ServiceStateType.Paused:
-                        service.Pause();
-                        if (options.waitForResult) service.WaitForStatus(ServiceControllerStatus.Paused);
-                        break;
-                    default:
-                        throw new Exception("Unreachable code reached.");
+                            if (options.waitForResult) service.WaitForStatus(ServiceControllerStatus.Running);
+                            break;
+                        case ServiceStateType.Stopped:
+                            service.Stop();
+                            if (options.waitForResult) service.WaitForStatus(ServiceControllerStatus.Stopped);
+                            break;
+                        case ServiceStateType.Paused:
+                            service.Pause();
+                            if (options.waitForResult) service.WaitForStatus(ServiceControllerStatus.Paused);
+                            break;
+                        default:
+                            throw new Exception("Unreachable code reached.");
 
-                }
-                #endregion
+                    }
+                    #endregion
 
-                return OperationResult.Success;    
+                    return OperationResult.Success;
                 }
             }
             catch (Exception ex)
             {
+                _log?.LogError(ex, "Error changing service state for {ServiceName} to {NewState}", serviceName, newState);
                 return OperationResult.Failure(ex.Message);
             }
         }
 
-        public static OperationResult ChangeStartupMode(string serviceName, StartupMode targetStartupMode)
+        public OperationResult ChangeStartupMode(string serviceName, StartupMode targetStartupMode)
         {
             if (!WindowsServicesInfo.ServiceExist(serviceName))
                 return OperationResult.Failure($"Service '{serviceName}' does not exist.");
