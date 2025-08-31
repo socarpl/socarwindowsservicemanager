@@ -39,7 +39,7 @@ namespace SWSM.Core
 
                 //If for some reason provided state is Undefined there is no action taken 
                 if (newState == ServiceStateType.Undefined)
-                    return OperationResult.NoAction(serviceName + " cannot be set to undefined state. No action taken.");
+                    return OperationResult.Failure(serviceName + " cannot be set to undefined state. No action taken.");
 
                 //If name of service is incorrect then failure is reported.
                 if (!WindowsServicesInfo.ServiceExist(serviceName))
@@ -56,16 +56,16 @@ namespace SWSM.Core
                         case ServiceControllerStatus.ContinuePending:
                         case ServiceControllerStatus.PausePending:
                         case ServiceControllerStatus.StopPending:
-                            return OperationResult.NoAction($"Service '{serviceName}' is already in a pending state. Cannot change state to {newState}.");
+                            return OperationResult.Failure($"Service '{serviceName}' is already in a pending state. Cannot change state to {newState}.");
 
                         case ServiceControllerStatus.Running when newState == ServiceStateType.Running:
-                            return OperationResult.NoAction($"Service '{serviceName}' is already running. No action taken.");
+                            return OperationResult.Success($"Service '{serviceName}' is already running. No action taken.");
 
                         case ServiceControllerStatus.Paused when newState == ServiceStateType.Paused:
-                            return OperationResult.NoAction($"Service '{serviceName}' is already paused. No action taken.");
+                            return OperationResult.Success($"Service '{serviceName}' is already paused. No action taken.");
 
                         case ServiceControllerStatus.Stopped when newState == ServiceStateType.Stopped:
-                            return OperationResult.NoAction($"Service '{serviceName}' is already stopped. No action taken.");
+                            return OperationResult.Success($"Service '{serviceName}' is already stopped. No action taken.");
 
                         case ServiceControllerStatus.Running:
                         case ServiceControllerStatus.Paused:
@@ -84,7 +84,8 @@ namespace SWSM.Core
                         case ServiceStateType.Running:
                             if (ServiceInfo.GetServiceCurrentStartupMode(serviceName) == StartupMode.Disabled && options.enableIfDisabled)
                             {
-                                if (!ChangeStartupMode(serviceName, options.targetStartupModeAfterEnabled).IsSuccess)
+                                OperationResult opStatus = ChangeStartupMode(serviceName, options.targetStartupModeAfterEnabled);
+                                if (opStatus.IsFailure)
                                     return OperationResult.Failure($"Failed to change startup mode for service '{serviceName}' before starting it.");
                                 service.Refresh();
                             }
@@ -106,7 +107,7 @@ namespace SWSM.Core
                     }
                     #endregion
 
-                    return OperationResult.Success;
+                    return OperationResult.Success("State changed successfuly");
                 }
             }
             catch (Exception ex)
@@ -123,7 +124,7 @@ namespace SWSM.Core
 
             if (targetStartupMode == ServiceInfo.GetServiceCurrentStartupMode(serviceName))
             {
-                return OperationResult.NoAction($"Service '{serviceName}' is already set to {targetStartupMode} startup mode. No action taken.");
+                return OperationResult.Success($"Service '{serviceName}' is already set to {targetStartupMode} startup mode. No action taken.");
             }
 
             try
@@ -156,7 +157,7 @@ namespace SWSM.Core
                             return OperationResult.Failure("Unsupported startup mode.");
                     }
                 }
-                return OperationResult.Success;
+                return OperationResult.Success("State changed successfuly");
             }
             catch (Exception ex)
             {
