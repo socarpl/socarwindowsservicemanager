@@ -2,7 +2,7 @@
 using SWSM.SCM.Interface.Enums;
 using System.ServiceProcess;
 
-namespace SWSM.SMC.NetFramework
+namespace SWSM.SMC.NETAPI
 {
     public class ExecutionManagement : IServiceExecState
     {
