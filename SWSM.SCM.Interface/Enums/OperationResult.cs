@@ -1,6 +1,6 @@
 using System.Diagnostics.Metrics;
 
-namespace SWSM.Core
+namespace SWSM.SCM.Interface.Enums
 {
     public enum OperationResultStatus
     {
@@ -16,7 +16,7 @@ namespace SWSM.Core
         {
             get
             {
-                return this.OperationStatus == OperationResultStatus.Success ;
+                return OperationStatus == OperationResultStatus.Success ;
             }
         }
 
@@ -24,7 +24,7 @@ namespace SWSM.Core
         {
             get
             {
-                return this.OperationStatus == OperationResultStatus.Failure;
+                return OperationStatus == OperationResultStatus.Failure;
             }
         }
 

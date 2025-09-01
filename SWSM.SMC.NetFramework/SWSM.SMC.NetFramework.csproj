@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SWSM.SCM.Interface\SWSM.SCM.Interface.csproj" />
+  </ItemGroup>
+
 </Project>

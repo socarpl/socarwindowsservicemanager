@@ -5,6 +5,7 @@ using System.Management;
 using System.Security.Authentication.ExtendedProtection;
 using System.ServiceProcess;
 using Microsoft.Extensions.Logging;
+using SWSM.SCM.Interface.Enums;
 
 
 namespace SWSM.Core
@@ -84,7 +85,7 @@ namespace SWSM.Core
                         case ServiceStateType.Running:
                             if (ServiceInfo.GetServiceCurrentStartupMode(serviceName) == StartupMode.Disabled && options.enableIfDisabled)
                             {
-                                OperationResult opStatus = ChangeStartupMode(serviceName, options.targetStartupModeAfterEnabled);
+                                OperationResult opStatus = ChangeServiceStartMode(serviceName, options.targetStartupModeAfterEnabled);
                                 if (opStatus.IsFailure)
                                     return OperationResult.Failure($"Failed to change startup mode for service '{serviceName}' before starting it.");
                                 service.Refresh();
@@ -117,7 +118,7 @@ namespace SWSM.Core
             }
         }
 
-        public OperationResult ChangeStartupMode(string serviceName, StartupMode targetStartupMode)
+        public OperationResult ChangeServiceStartMode(string serviceName, StartupMode targetStartupMode)
         {
             if (!WindowsServicesInfo.ServiceExist(serviceName))
                 return OperationResult.Failure($"Service '{serviceName}' does not exist.");
