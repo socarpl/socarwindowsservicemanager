@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="9.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SWSM.SCM.Interface\SWSM.SCM.Interface.csproj" />
   </ItemGroup>
 
