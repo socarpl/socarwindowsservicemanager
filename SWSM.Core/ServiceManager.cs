@@ -74,7 +74,7 @@ namespace SWSM.Core
 
         public OperationResult ChangeServiceStartMode(string serviceName, StartupMode targetStartupMode)
         {
-            if (!WindowsServicesInfo.ServiceExist(serviceName))
+            if (!ISCMInfo.ServiceExist(serviceName).Result<bool>())
                 return OperationResult.Failure($"Service '{serviceName}' does not exist.");
 
             if (targetStartupMode == ServiceInfo.GetServiceCurrentStartupMode(serviceName))

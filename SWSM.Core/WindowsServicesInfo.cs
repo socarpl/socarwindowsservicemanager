@@ -67,48 +67,8 @@ namespace SWSM.Core
             return ret.ToList();
         }
 
-        /// <summary>
-        /// Checks if service exist based on short name of the service
-        /// </summary>
-        /// <param name="serviceName"></param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        public static bool ServiceExist(string serviceName)
-        {
-            try
-            {
-                using (ServiceController service = new ServiceController(serviceName))
-                {
-                    return true; // If we can create a ServiceController, the service exists
-                }
-            }
-            catch (InvalidOperationException)
-            {
-                return false; // Service does not exist
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Error checking service existence: {ex.Message}", ex);
-            }
-        }
 
-        /// <summary>
-        /// Retrieves the current status of a specified Windows service.
-        /// </summary>
-        /// <param name="ServiceName">The short name of the Windows service.</param>
-        /// <returns>The current <see cref="ServiceControllerStatus"/> of the service.</returns>
-        /// <exception cref="Exception">Thrown if the specified service does not exist.</exception>
-        public static ServiceControllerStatus GetServiceCurrentState(String ServiceName)
-        {
-            if (!ServiceExist(ServiceName))
-                throw new Exception($"Service '{ServiceName}' does not exist.");
-            using (ServiceController service = new ServiceController(ServiceName))
-            {
-                return service.Status;
-            }
-        }
 
-      
 
 
 
