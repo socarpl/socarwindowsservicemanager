@@ -2,7 +2,7 @@
 
 namespace SWSM.SCM.Interface
 {
-    public interface IServiceExecState
+    public interface IServiceExecStateProvider
     {
 
         OperationResult StartService(string ServiceName);

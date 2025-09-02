@@ -6,10 +6,11 @@ using System.Runtime.CompilerServices;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
+using SWSM.SCM.Interface.Enums;
 
 namespace SWSM.Core.DTO
 {
-    public enum StartupMode { Undefined, AutomaticDelayed, Automatic, Manual, Disabled }
+    
     public enum ServiceStateType { Stopped, Running, Paused  } //we are not interested in pending states because we set target state and "wait" for it
     public class ServiceNode
     {
@@ -21,7 +22,7 @@ namespace SWSM.Core.DTO
         public List<String> DependsOn { get; set; }        
         public List<String> DependantServices { get; set; }
         public ServiceController? SourceSC { get; set; } //optional, may be null
-        public StartupMode ServiceStartupType { get; set; }
+        public ServiceStartType ServiceStartupType { get; set; }
         public ServiceStateType ServiceStateType { get; set; }
         public String ServiceName { get; set; }
         public String ServiceDisplayName { get; set; }

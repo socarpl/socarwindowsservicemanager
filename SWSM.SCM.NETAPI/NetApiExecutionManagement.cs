@@ -2,9 +2,9 @@
 using SWSM.SCM.Interface.Enums;
 using System.ServiceProcess;
 
-namespace SWSM.SMC.NETAPI
+namespace SWSM.SCM.NETAPI
 {
-    public class NetApiExecutionManagement : IServiceExecState
+    public class NetApiExecutionManagement : IServiceExecStateProvider
     {
 
         public NetApiExecutionManagement() { 

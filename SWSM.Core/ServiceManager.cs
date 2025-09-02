@@ -24,7 +24,7 @@ namespace SWSM.Core
         private ILogger _log;
 
 
-        private IServiceExecState ISCMExec;
+        private IServiceExecStateProvider ISCMExec;
         private IServiceInfo ISCMInfo;
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace SWSM.Core
             }
         }
 
-        public OperationResult ChangeServiceStartMode(string serviceName, StartupMode targetStartupMode)
+        public OperationResult ChangeServiceStartMode(string serviceName, ServiceStartType targetStartupMode)
         {
             if (!ISCMInfo.ServiceExist(serviceName).Result<bool>())
                 return OperationResult.Failure($"Service '{serviceName}' does not exist.");
@@ -92,19 +92,19 @@ namespace SWSM.Core
 
                     switch (targetStartupMode)
                     {
-                        case StartupMode.Automatic:
+                        case ServiceStartType.Automatic:
                             key.SetValue("Start", 2, RegistryValueKind.DWord);
                             key.DeleteValue("DelayedAutoStart", false);
                             break;
-                        case StartupMode.AutomaticDelayed:
+                        case ServiceStartType.AutomaticDelayed:
                             key.SetValue("Start", 2, RegistryValueKind.DWord);
                             key.SetValue("DelayedAutoStart", 1, RegistryValueKind.DWord);
                             break;
-                        case StartupMode.Manual:
+                        case ServiceStartType.Manual:
                             key.SetValue("Start", 3, RegistryValueKind.DWord);
                             key.DeleteValue("DelayedAutoStart", false);
                             break;
-                        case StartupMode.Disabled:
+                        case ServiceStartType.Disabled:
                             key.SetValue("Start", 4, RegistryValueKind.DWord);
                             key.DeleteValue("DelayedAutoStart", false);
                             break;

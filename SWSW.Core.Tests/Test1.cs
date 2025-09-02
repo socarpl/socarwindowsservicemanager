@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Bson;
 using SWSM.Core;
 using SWSM.Core.DTO;
+using SWSM.SCM.Interface.Enums;
 
 namespace SWSW.Core.Tests
 {
@@ -18,7 +19,7 @@ namespace SWSW.Core.Tests
         {
             //HotKeyServiceUWP
             ServiceManager sm = new ServiceManager();
-            var resultStart = sm.ChangeServiceState("WirelessKB850NotificationService", ServiceStateType.Running, new ServiceChangeStateOptions { waitForResult=true, enableIfDisabled=true, targetStartupModeAfterEnabled = StartupMode.Automatic } );
+            var resultStart = sm.ChangeServiceState("WirelessKB850NotificationService", ServiceStateType.Running, new ServiceChangeStateOptions { waitForResult=true, enableIfDisabled=true, targetStartupModeAfterEnabled = ServiceStartType.Automatic } );
         }
 
         [TestMethod]

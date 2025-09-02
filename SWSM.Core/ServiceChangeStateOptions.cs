@@ -1,9 +1,12 @@
 ﻿using SWSM.Core.DTO;
+using SWSM.SCM.Interface.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+
 
 namespace SWSM.Core
 {
@@ -24,7 +27,7 @@ namespace SWSM.Core
         /// <summary>
         /// If target service that has to be started is currently Disabled, this property defines what startup mode should be set when enabling the service.
         /// </summary>
-        public StartupMode targetStartupModeAfterEnabled { get; set; } = StartupMode.Manual;
+        public ServiceStartType targetStartupModeAfterEnabled { get; set; } = ServiceStartType.Manual;
 
         public static ServiceChangeStateOptions? GetDefaultOption()
         {

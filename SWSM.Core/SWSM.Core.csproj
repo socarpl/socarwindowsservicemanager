@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SWSM.SCM.Interface\SWSM.SCM.Interface.csproj" />
-    <ProjectReference Include="..\SWSM.SMC.NetFramework\SWSM.SMC.NETAPI.csproj" />
+    <ProjectReference Include="..\SWSM.SCM.NETAPI\SWSM.SCM.NETAPI.csproj" />
   </ItemGroup>
 
 </Project>

@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace SWSM.SCM.Interface
 {
-    public interface IServiceStartMode
+    public interface IServiceStartTypeProvider
     {
+
+        void GetServiceStartType(String ServiceName);
     }
 }
