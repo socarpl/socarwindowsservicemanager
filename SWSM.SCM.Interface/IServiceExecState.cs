@@ -4,6 +4,8 @@ namespace SWSM.SCM.Interface
 {
     public interface IServiceExecState
     {
+
+
         OperationResult StartService(string ServiceName);
         OperationResult StopService(string ServiceName);
 

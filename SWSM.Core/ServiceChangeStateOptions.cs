@@ -22,7 +22,7 @@ namespace SWSM.Core
         /// </summary>
         public bool enableIfDisabled { get; set; } = false;
         /// <summary>
-        /// if enableIfDisabled is true, this property defines the startup mode to set for the service. 
+        /// If target service that has to be started is currently Disabled, this property defines what startup mode should be set when enabling the service.
         /// </summary>
         public StartupMode targetStartupModeAfterEnabled { get; set; } = StartupMode.Manual;
 

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace SWSM.Core.DTO
 {
     public enum StartupMode { Undefined, AutomaticDelayed, Automatic, Manual, Disabled }
-    public enum ServiceStateType { Undefined, Running, Paused, Stopped } //we are not interested in pending states because we set target state and "wait" for it
+    public enum ServiceStateType { Stopped, Running, Paused  } //we are not interested in pending states because we set target state and "wait" for it
     public class ServiceNode
     {
         public ServiceNode()

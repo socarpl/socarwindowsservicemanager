@@ -6,6 +6,7 @@ using System.Security.Authentication.ExtendedProtection;
 using System.ServiceProcess;
 using Microsoft.Extensions.Logging;
 using SWSM.SCM.Interface.Enums;
+using SWSM.SCM.Interface;
 
 
 namespace SWSM.Core
@@ -19,9 +20,12 @@ namespace SWSM.Core
         {
             _log = log;
         }
-    
+
         private ILogger _log;
-     
+
+
+        private IServiceExecState ISCMExec;
+        private IServiceInfo ISCMInfo;
 
         /// <summary>
         /// Changes the state of a specified Windows service to the desired state.
@@ -36,85 +40,35 @@ namespace SWSM.Core
 
             try
             {
-                if (options == null) options = ServiceChangeStateOptions.GetDefaultOption(); //default
+                if (options == null) options = ServiceChangeStateOptions.GetDefaultOption();
 
-                //If for some reason provided state is Undefined there is no action taken 
-                if (newState == ServiceStateType.Undefined)
-                    return OperationResult.Failure(serviceName + " cannot be set to undefined state. No action taken.");
-
-                //If name of service is incorrect then failure is reported.
-                if (!WindowsServicesInfo.ServiceExist(serviceName))
+                // If name of service is incorrect then failure is reported.
+                if (!ISCMInfo.ServiceExist(serviceName).Result<bool>())
                     return OperationResult.Failure($"Service '{serviceName}' does not exist.");
 
-                // If target state is same as current or service is in transition from one state to another (pendingXYZ) no action should be taken.
-                #region Status matching 
-                using (ServiceController service = new ServiceController(serviceName))
+                // Switch based on newState and execute corresponding ISCMExec method
+                OperationResult result;
+                switch (newState)
                 {
-                    _log?.LogInformation("Current status of service {ServiceName} is {ServiceStatus}", serviceName, service.Status);
-                    switch (service.Status)
-                    {
-                        case ServiceControllerStatus.StartPending:
-                        case ServiceControllerStatus.ContinuePending:
-                        case ServiceControllerStatus.PausePending:
-                        case ServiceControllerStatus.StopPending:
-                            return OperationResult.Failure($"Service '{serviceName}' is already in a pending state. Cannot change state to {newState}.");
-
-                        case ServiceControllerStatus.Running when newState == ServiceStateType.Running:
-                            return OperationResult.Success($"Service '{serviceName}' is already running. No action taken.");
-
-                        case ServiceControllerStatus.Paused when newState == ServiceStateType.Paused:
-                            return OperationResult.Success($"Service '{serviceName}' is already paused. No action taken.");
-
-                        case ServiceControllerStatus.Stopped when newState == ServiceStateType.Stopped:
-                            return OperationResult.Success($"Service '{serviceName}' is already stopped. No action taken.");
-
-                        case ServiceControllerStatus.Running:
-                        case ServiceControllerStatus.Paused:
-                        case ServiceControllerStatus.Stopped:
-                            break; // Continue to state change logic
-
-                        default:
-                            throw new Exception("This should not be thrown ever as this code should not be reachable");
-                    }
-                    #endregion
-
-                    // Execute state change
-                    #region status state change 
-                    switch (newState)
-                    {
-                        case ServiceStateType.Running:
-                            if (ServiceInfo.GetServiceCurrentStartupMode(serviceName) == StartupMode.Disabled && options.enableIfDisabled)
-                            {
-                                OperationResult opStatus = ChangeServiceStartMode(serviceName, options.targetStartupModeAfterEnabled);
-                                if (opStatus.IsFailure)
-                                    return OperationResult.Failure($"Failed to change startup mode for service '{serviceName}' before starting it.");
-                                service.Refresh();
-                            }
-                            service.Start();
-
-                            if (options.waitForResult) service.WaitForStatus(ServiceControllerStatus.Running);
-                            break;
-                        case ServiceStateType.Stopped:
-                            service.Stop();
-                            if (options.waitForResult) service.WaitForStatus(ServiceControllerStatus.Stopped);
-                            break;
-                        case ServiceStateType.Paused:
-                            service.Pause();
-                            if (options.waitForResult) service.WaitForStatus(ServiceControllerStatus.Paused);
-                            break;
-                        default:
-                            throw new Exception("Unreachable code reached.");
-
-                    }
-                    #endregion
-
-                    return OperationResult.Success("State changed successfuly");
+                    case ServiceStateType.Running:
+                        result = ISCMExec.StartService(serviceName);
+                        break;
+                    case ServiceStateType.Stopped:
+                        result = ISCMExec.StopService(serviceName);
+                        break;
+                    case ServiceStateType.Paused:
+                        result = ISCMExec.PauseService(serviceName);
+                        break;
+                    default:
+                        return OperationResult.Failure("Unsupported service state requested.");
                 }
+
+                return result;
             }
             catch (Exception ex)
             {
                 _log?.LogError(ex, "Error changing service state for {ServiceName} to {NewState}", serviceName, newState);
-                return OperationResult.Failure(ex.Message);
+                return OperationResult.Failure($"Exception: {ex.GetType().Name} - {ex.Message}");
             }
         }
 
@@ -165,10 +119,10 @@ namespace SWSM.Core
                 return OperationResult.Failure($"Failed to change startup mode: {ex.Message}");
             }
         }
-       
 
 
-     
+
+
 
     }
 
