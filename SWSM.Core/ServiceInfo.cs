@@ -1,5 +1,4 @@
 ﻿using Microsoft.Win32;
-using SWSM.Core.DTO;
 using SWSM.SCM.Interface.Enums;
 using System;
 using System.Collections.Generic;
@@ -34,22 +33,22 @@ namespace SWSM.Core
         /// The <see cref="StartupMode"/> representing the startup mode of the service.
         /// Returns <see cref="StartupMode.Undefined"/> if the service is null.
         /// </returns>
-        public static ServiceStartType GetServiceStartupType(ServiceController service)
+        public static SCM.Interface.Enums.ServiceStartMode GetServiceStartupType(ServiceController service)
         {
             if (service == null)
                 throw new Exception("ServiceController instance is null");
 
             // Check if the service is set to delayed automatic start
             if (IsDelayedAutoStart(service.ServiceName))
-                return ServiceStartType.AutomaticDelayed;
+                return SCM.Interface.Enums.ServiceStartMode.AutomaticDelayed;
 
             // Determine the startup mode based on the service's StartType
             var startMode = service.StartType;
             switch (startMode)
             {
-                case ServiceStartMode.Automatic: return ServiceStartType.Automatic;
-                case ServiceStartMode.Manual: return ServiceStartType.Manual;
-                case ServiceStartMode.Disabled: return ServiceStartType.Disabled;
+                case System.ServiceProcess.ServiceStartMode.Automatic: return SCM.Interface.Enums.ServiceStartMode.Automatic;
+                case System.ServiceProcess.ServiceStartMode.Manual: return SCM.Interface.Enums.ServiceStartMode.Manual;
+                case System.ServiceProcess.ServiceStartMode.Disabled: return SCM.Interface.Enums.ServiceStartMode.Disabled;
                 default: throw new Exception("Undefined service start mode");
             }
         }
@@ -101,7 +100,7 @@ namespace SWSM.Core
         /// The <see cref="StartupMode"/> representing the current startup mode of the service.
         /// Returns <see cref="StartupMode.Undefined"/> if the service cannot be found or an error occurs.
         /// </returns>
-        public static ServiceStartType GetServiceCurrentStartupMode(string serviceName)
+        public static SCM.Interface.Enums.ServiceStartMode GetServiceCurrentStartupMode(string serviceName)
         {
             try
             {
@@ -113,17 +112,17 @@ namespace SWSM.Core
 
                     // Check if the service is set to delayed automatic start
                     if (IsDelayedAutoStart(service.ServiceName))
-                        return ServiceStartType.AutomaticDelayed;
+                        return SCM.Interface.Enums.ServiceStartMode.AutomaticDelayed;
 
                     // Determine the startup mode based on the service's StartType
                     switch (service.StartType)
                     {
-                        case ServiceStartMode.Automatic:
-                            return ServiceStartType.Automatic;
-                        case ServiceStartMode.Manual:
-                            return ServiceStartType.Manual;
-                        case ServiceStartMode.Disabled:
-                            return ServiceStartType.Disabled;
+                        case System.ServiceProcess.ServiceStartMode.Automatic:
+                            return SCM.Interface.Enums.ServiceStartMode.Automatic;
+                        case System.ServiceProcess.ServiceStartMode.Manual:
+                            return SCM.Interface.Enums.ServiceStartMode.Manual;
+                        case System.ServiceProcess.ServiceStartMode.Disabled:
+                            return SCM.Interface.Enums.ServiceStartMode.Disabled;
                         default:
                             throw new Exception("Undefined service start mode");    
                     }

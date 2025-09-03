@@ -13,12 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="WindowsServicesProfile\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\SWSM.SCM.Interface\SWSM.SCM.Interface.csproj" />
     <ProjectReference Include="..\SWSM.SCM.NETAPI\SWSM.SCM.NETAPI.csproj" />
+    <ProjectReference Include="..\SWSM.SCM.Shared\SWSM.SCM.Shared.csproj" />
   </ItemGroup>
 
 </Project>

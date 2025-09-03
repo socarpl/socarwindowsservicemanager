@@ -8,7 +8,6 @@ namespace SWSM.SCM.Interface
 {
     public interface IServiceStartTypeProvider
     {
-
         void GetServiceStartType(String ServiceName);
     }
 }

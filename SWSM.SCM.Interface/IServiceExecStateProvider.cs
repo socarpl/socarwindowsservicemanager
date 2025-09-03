@@ -11,7 +11,7 @@ namespace SWSM.SCM.Interface
         OperationResult PauseService(string ServiceName);
         OperationResult ContinueService(string ServiceName);
 
-        ServiceExecStatus GetCurrentExecutionState(string ServiceName);  
+        
 
 
     }

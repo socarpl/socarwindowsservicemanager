@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SWSM.SCM.NETAPI", "SWSM.SCM
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SWSM.SCM.Interface", "SWSM.SCM.Interface\SWSM.SCM.Interface.csproj", "{B7E8FD7C-53DE-49C0-8876-BD9D368E3AB9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SWSM.SCM.Shared", "SWSM.SCM.Shared\SWSM.SCM.Shared.csproj", "{9F12AC18-EA9C-49E1-BDBD-6AD31936BDA9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,10 @@ Global
 		{B7E8FD7C-53DE-49C0-8876-BD9D368E3AB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7E8FD7C-53DE-49C0-8876-BD9D368E3AB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7E8FD7C-53DE-49C0-8876-BD9D368E3AB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F12AC18-EA9C-49E1-BDBD-6AD31936BDA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F12AC18-EA9C-49E1-BDBD-6AD31936BDA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F12AC18-EA9C-49E1-BDBD-6AD31936BDA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F12AC18-EA9C-49E1-BDBD-6AD31936BDA9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

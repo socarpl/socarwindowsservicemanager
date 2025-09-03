@@ -1,4 +1,6 @@
-﻿using SWSM.Core.DTO;
+﻿
+
+using SWSM.SCM.Shared.DTO;
 
 namespace SWSM.ProfileManagement
 {

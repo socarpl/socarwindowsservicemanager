@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SWSM.SCM.Interface.Enums
 {
-    public enum ServiceStartType
+    public enum ServiceStartMode
     {
         Automatic,
         AutomaticDelayed,

@@ -1,6 +1,6 @@
 ﻿
 using Microsoft.Win32;
-using SWSM.Core.DTO;
+
 using System.Management;
 using System.Security.Authentication.ExtendedProtection;
 using System.ServiceProcess;
@@ -34,7 +34,7 @@ namespace SWSM.Core
         /// <param name="newState">The desired state to change the service to. See <see cref="ServiceStateType"/>.</param>
         /// <param name="options">Options controlling how the state change is performed. See <see cref="ServiceChangeStateOptions"/>.</param>
         /// <returns>An <see cref="OperationResult"/> indicating the outcome of the operation.</returns>
-        public OperationResult ChangeServiceState(string serviceName, ServiceStateType newState, ServiceChangeStateOptions? options)
+        public OperationResult ChangeServiceState(string serviceName, ServiceExecStatus newState, ServiceChangeStateOptions? options)
         {
             _log?.LogInformation("ChangeServiceState called with serviceName: {ServiceName}, newState: {NewState}, options: {@Options}", serviceName, newState, options);
 
@@ -50,13 +50,13 @@ namespace SWSM.Core
                 OperationResult result;
                 switch (newState)
                 {
-                    case ServiceStateType.Running:
+                    case ServiceExecStatus.Running:
                         result = ISCMExec.StartService(serviceName);
                         break;
-                    case ServiceStateType.Stopped:
+                    case ServiceExecStatus.Stopped:
                         result = ISCMExec.StopService(serviceName);
                         break;
-                    case ServiceStateType.Paused:
+                    case ServiceExecStatus.Paused:
                         result = ISCMExec.PauseService(serviceName);
                         break;
                     default:
@@ -72,7 +72,7 @@ namespace SWSM.Core
             }
         }
 
-        public OperationResult ChangeServiceStartMode(string serviceName, ServiceStartType targetStartupMode)
+        public OperationResult ChangeServiceStartMode(string serviceName, SCM.Interface.Enums.ServiceStartMode targetStartupMode)
         {
             if (!ISCMInfo.ServiceExist(serviceName).Result<bool>())
                 return OperationResult.Failure($"Service '{serviceName}' does not exist.");
@@ -92,19 +92,19 @@ namespace SWSM.Core
 
                     switch (targetStartupMode)
                     {
-                        case ServiceStartType.Automatic:
+                        case SCM.Interface.Enums.ServiceStartMode.Automatic:
                             key.SetValue("Start", 2, RegistryValueKind.DWord);
                             key.DeleteValue("DelayedAutoStart", false);
                             break;
-                        case ServiceStartType.AutomaticDelayed:
+                        case SCM.Interface.Enums.ServiceStartMode.AutomaticDelayed:
                             key.SetValue("Start", 2, RegistryValueKind.DWord);
                             key.SetValue("DelayedAutoStart", 1, RegistryValueKind.DWord);
                             break;
-                        case ServiceStartType.Manual:
+                        case SCM.Interface.Enums.ServiceStartMode.Manual:
                             key.SetValue("Start", 3, RegistryValueKind.DWord);
                             key.DeleteValue("DelayedAutoStart", false);
                             break;
-                        case ServiceStartType.Disabled:
+                        case SCM.Interface.Enums.ServiceStartMode.Disabled:
                             key.SetValue("Start", 4, RegistryValueKind.DWord);
                             key.DeleteValue("DelayedAutoStart", false);
                             break;

@@ -1,5 +1,5 @@
 ﻿using Microsoft.Win32;
-using SWSM.Core.DTO;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +7,7 @@ using System.Management;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
+using SWSM.SCM.Shared.DTO;
 
 namespace SWSM.Core
 {
@@ -44,10 +45,9 @@ namespace SWSM.Core
                 // Create a ServiceEntry for the current service
                 var ws = new ServiceNode
                 {
-                    ServiceStartupType = ServiceInfo.GetServiceStartupType(service),
+                    StartupType = ServiceInfo.GetServiceStartupType(service),
                     ServiceName = service.ServiceName,
-                    ServiceDisplayName = service.DisplayName,
-                    SourceSC = service,
+                    ServiceDisplayName = service.DisplayName,                    
                     DependsOn = service.ServicesDependedOn.Select(s => s.ServiceName).ToList(),
                     DependantServices = service.DependentServices.Select(s => s.ServiceName).ToList()
                 };
